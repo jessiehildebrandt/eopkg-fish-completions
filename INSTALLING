@@ -1,5 +1,5 @@
 = eopkg Fish Completions =
-==== ( Version 1.0.0 ) ===
+==== ( Version 1.1.0 ) ===
 ======= Installing =======
 
 To install/use, either:
@@ -12,7 +12,7 @@ only provide the completions for the remainder of the active fish session).
 * Place "eopkg.fish" in the ~/.config/fish/completions/ folder. If this folder
 does not exist, you will have to create it. Then, any fish session started by
 the active user will now have working completions for eopkg. You will have to
-restart any active fish sessions for the changes to take place.
+restart any active fish sessions in order for the changes to take place.
 
 
 = Known Issues =
