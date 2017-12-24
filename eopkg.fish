@@ -10,66 +10,68 @@
 # List installed packages
 function __fish_eopkg_print_installed --description 'Print out a list of installed packages from eopkg'
 
-	# Set up cache directory
-	if test -z "$XDG_CACHE_HOME"
-		set XDG_CACHE_HOME $HOME/.cache
-	end
-	mkdir -m 700 -p $XDG_CACHE_HOME
+    # Set up cache directory
+    if test -z "$XDG_CACHE_HOME"
+        set XDG_CACHE_HOME $HOME/.cache
+    end
+    mkdir -m 700 -p $XDG_CACHE_HOME
 
-	# Set up cache file for installed packages
-	set -l cache_file $XDG_CACHE_HOME/.eopkg-installed-cache.$USER
+    # Set up cache file for installed packages
+    set -l cache_file $XDG_CACHE_HOME/.eopkg-installed-cache.$USER
 
-	# Check for the cache file
-	if test -f $cache_file
+    # Check for the cache file
+    if test -f $cache_file
 
-		# Read contents of the cache file
-		cat $cache_file
+        # Read contents of the cache file
+        cat $cache_file
 
-		# Check age and return prematurely if its still young enough
-		set -l age (math (date +%s) - (stat -c '%Y' $cache_file))
-		set -l max_age 21600 # Max age - 6 hours
-		if test $age -lt $max_age
-			return
-		end
+        # Check age and return prematurely if its still young enough
+        set -l age (math (date +%s) - (stat -c '%Y' $cache_file))
+        set -l max_age 21600 # Max age - 6 hours
+        if test $age -lt $max_age
+            return
+        end
 
-	end
+    end
 
-	# Pipe eopkg results into the cache file, updating it
-	eopkg list-installed -N | grep --color=never -o '^\S*' > $cache_file &
+    # Pipe eopkg results into the cache file, updating it
+    grep -P "<Name>[^\s]*</Name>" /var/lib/eopkg/package/*/metadata.xml | gawk -F '>' '{print $2}' | gawk -F '<' '{print $1}' | sort | uniq > $cache_file
+    cat $cache_file	
 
-	return
+    return
 
 end
 
 # List available packages
 function __fish_eopkg_print_available --description 'Print out a list of available packages from eopkg'
 
-	# Set up cache directory
-	if test -z "$XDG_CACHE_HOME"
-		set XDG_CACHE_HOME $HOME/.cache
-	end
-	mkdir -m 700 -p $XDG_CACHE_HOME
+    # Set up cache directory
+    if test -z "$XDG_CACHE_HOME"
+        set XDG_CACHE_HOME $HOME/.cache
+    end
+    mkdir -m 700 -p $XDG_CACHE_HOME
 
-	# Set up cache file for available packages
-	set -l cache_file $XDG_CACHE_HOME/.eopkg-available-cache.$USER
+    # Set up cache file for installed packages
+    set -l cache_file $XDG_CACHE_HOME/.eopkg-installed-cache.$USER
 
-	# Check for the cache file
-	if test -f $cache_file
+    # Check for the cache file
+    if test -f $cache_file
 
-		# Read contents of the cache file
-		cat $cache_file
+        # Read contents of the cache file
+        cat $cache_file
 
-		# Check age and return prematurely if its still young enough
-		set -l age (math (date +%s) - (stat -c '%Y' $cache_file))
-		set -l max_age 21600 # Max age - 6 hours
-		if test $age -lt $max_age
-			return
-		end
+        # Check age and return prematurely if its still young enough
+        set -l age (math (date +%s) - (stat -c '%Y' $cache_file))
+        set -l max_age 21600 # Max age - 6 hours
+        if test $age -lt $max_age
+            return
+        end
 
-	end
+    end
 
-	# Pipe eopkg results into the cache file, updating it
-	eopkg list-available -N | grep --color=never -o '^\S*' > $cache_file &
+    # Pipe eopkg results into the cache file, updating it
+    grep -P "<Name>[^\s]*</Name>" /var/lib/eopkg/index/*/eopkg-index.xml | gawk -F '>' '{print $2}' | gawk -F '<' '{print $1}' | sort | uniq > $cache_file
+    cat $cache_file
 
 	return
 
